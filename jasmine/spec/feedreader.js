@@ -8,6 +8,12 @@
  * since some of these tests may require DOM elements. We want
  * to ensure they don't run until the DOM is ready.
  */
+
+
+ /* There is a conflict with jasmine-jquery library
+  *
+  */
+
 $(function() {
     /* This is our first test suite - a test suite just contains
     * a related set of tests. This suite is all about the RSS
@@ -26,36 +32,78 @@ $(function() {
             expect(allFeeds.length).not.toBe(0);
         });
 
-
-        /* TODO: Write a test that loops through each feed
+        /* A test that loops through each feed
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
+         it('have URLs', function(){
+           allFeeds.forEach(function(e){
+             expect(e['url']).not.toBe('');
+             expect(e['url']).not.toBe(undefined);
 
+           })
+         });
 
-        /* TODO: Write a test that loops through each feed
+        /* A test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
+         it('have names', function(){
+           allFeeds.forEach(function(e){
+             expect(e['name']).not.toBe('');
+             expect(e['name']).not.toBe(undefined);
+
+           })
+         })
+
     });
 
+    describe('The menu', function(){
 
-    /* TODO: Write a new test suite named "The menu" */
-
-        /* TODO: Write a test that ensures the menu element is
+        /* Tests that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
+         it('is hidden', function(){
+           let body = $('body'),
+           menuPos = $('.slide-menu').position();
 
-         /* TODO: Write a test that ensures the menu changes
-          * visibility when the menu icon is clicked. This test
-          * should have two expectations: does the menu display when
-          * clicked and does it hide when clicked again.
+           expect(body.hasClass('menu-hidden')).toBe(true);
+           expect(menuPos.left).toBeLessThan(-191);
+          })
+
+         /* Tests menu visibility changes when the menu icon is clicked.
+          * Checks if the first click triggers click event and hiding
+          * and the second click triggers it back
+          *
+          * This part was largely from pablo-az's answer on stackoverflow:
+          * https://stackoverflow.com/a/50375478/9144800
+          *
+          * and
+          *
+          * https://www.htmlgoodies.com/beyond/javascript/js-ref/testing-dom-events-using-jquery-and-jasmine-2.0.html
+          *
           */
 
-    /* TODO: Write a new test suite named "Initial Entries" */
+          it('toggles shown/hidden when clicked', function(){
+            let spyEvent = spyOnEvent('.menu-icon-link', 'click');
 
+            // first click
+            $('.menu-icon-link').click();
+            expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
+            expect(spyEvent).toHaveBeenTriggered();
+            expect($('body').hasClass('menu-hidden')).toBe(false);
+
+            // second click
+            $('.menu-icon-link').click();
+            expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
+            expect(spyEvent).toHaveBeenTriggered();
+            expect($('body').hasClass('menu-hidden')).toBe(true);
+          })
+
+
+    /* TODO: Write a new test suite named "Initial Entries" */
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
@@ -69,4 +117,6 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+    })
+
 }());

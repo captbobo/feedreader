@@ -6,6 +6,7 @@
  * jQuery.
  */
 
+
 // The names and URLs to all of the feeds we'd like available.
 var allFeeds = [
     {
@@ -21,6 +22,7 @@ var allFeeds = [
         name: 'Linear Digressions',
         url: 'http://feeds.feedburner.com/udacity-linear-digressions'
     }
+
 ];
 
 /* This function starts up our application. The Google Feed
@@ -127,7 +129,10 @@ $(function() {
     /* When the menu icon is clicked on, we need to toggle a class
      * on the body to perform the hiding/showing of our menu.
      */
-    menuIcon.on('click', function() {
+    menuIcon.on('click', function () {
         $('body').toggleClass('menu-hidden');
+
     });
+
+
 }());
