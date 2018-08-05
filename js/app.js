@@ -57,7 +57,8 @@ function init() {
                      title = $('.header-title'),
                      entries = result.feed.entries,
                      entriesLen = entries.length,
-                     entryTemplate = Handlebars.compile($('.tpl-entry').html());
+                     entryTemplate = Handlebars.compile($('.tpl-entry').html()),
+                     loadFeedCheck = false;
 
                  title.html(feedName);   // Set the header text
                  container.empty();      // Empty out all previous entries
@@ -74,12 +75,14 @@ function init() {
                  if (cb) {
                      cb();
                  }
+
                },
        error: function (result, status, err){
                  //run only the callback without attempting to parse result due to error
                  if (cb) {
                      cb();
                  }
+
                },
        dataType: "json"
      });
