@@ -28,8 +28,8 @@ $(function() {
          */
          it('have URLs', function(){
            allFeeds.forEach(function(e){
-             expect(e['url']).not.toBe('');
-             expect(e['url']).not.toBe(undefined);
+             expect(e.url).not.toBe('');
+             expect(e.url).not.toBe(undefined);
 
            })
          });
@@ -40,11 +40,12 @@ $(function() {
          */
          it('have names', function(){
            allFeeds.forEach(function(e){
-             // First one doesn't work while others does
-             // expect(e['name']).toEqual(jasmine.anything());
-             expect(e['name']).not.toBe('');
-             expect(e['name']).not.toBe(null);
-             expect(e['name']).not.toBe(undefined);
+             // Here the first one doesn't work while others does
+             // I don't
+             // expect(e.name).toEqual(jasmine.anything());
+             expect(e.name).not.toBe('');
+             expect(e.name).not.toBe(null);
+             expect(e.name).not.toBe(undefined);
            })
          })
 
