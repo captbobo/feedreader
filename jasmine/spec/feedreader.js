@@ -40,9 +40,11 @@ $(function() {
          */
          it('have names', function(){
            allFeeds.forEach(function(e){
+             // First one doesn't work while others does
+             // expect(e['name']).toEqual(jasmine.anything());
              expect(e['name']).not.toBe('');
+             expect(e['name']).not.toBe(null);
              expect(e['name']).not.toBe(undefined);
-
            })
          })
 
@@ -64,7 +66,7 @@ $(function() {
           * Checks if the first click triggers click event and hiding
           * and the second click triggers it back
           *
-          * This part was largely from pablo-az's answer on stackoverflow:
+          * This part below was largely from pablo-az's answer on stackoverflow:
           * https://stackoverflow.com/a/50375478/9144800
           *
           * and
@@ -95,18 +97,14 @@ $(function() {
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          */
-         beforeEach(function(done){
-           spyOn(window, 'loadFeed').and.callThrough();
-           window.loadFeed(id, cb);
-           done();
-         })
-
-         afterEach(function(){
-           window.loadFeed.calls.reset();
+         beforeEach(function(){
+           let loadFeed = spyOn(window, 'loadFeed').and.callThrough();
+           // window.loadFeed(id, cb);
+           // done();
          })
 
          it('loadFeed called & at least 1 entry in feed', function(done){
-            expect(window.loadFeed).toHaveBeenCalled();
+            expect(loadFeed).toHaveBeenCalled();
             expect($('.feed').contents('entry')).not.toBe(0);
             done();
          })
@@ -115,21 +113,23 @@ $(function() {
 
     describe('New Feed Selection', function(){
       let container = $('.feed');
+      let containerEmpty = spyOnEvent()
 
       beforeEach(function(done){
-        spyOn($, 'ajax').and.CallFake(function (req) {
-            var d = $.Deferred();
-            d.resolve(cb);
-            return d.promise();
-        });
+        spyOn(container, 'empty').and.callThrough();
+        container.empty();
+        spyOn(container, 'append').and.callThrough();
+        container.append();
         done();
       })
 
       afterEach(function(){
+        container.empty.calls.reset();
       })
       // Tests if the empty() is called on feed container
       it('feed emptied and new feed called',function(done){
-
+        expect(container.empty).toHaveBeenCalled();
+        expect(container.append).toHaveBeenCalled();
         done();
       })
     })
