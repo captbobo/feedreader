@@ -26,71 +26,70 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-         it('have URLs', function(){
-           allFeeds.forEach(function(e){
-             expect(e.url).not.toBe('');
-             expect(e.url).not.toBe(undefined);
+        it('have URLs', function(){
+          allFeeds.forEach(function(e){
+           expect(e.url).not.toBe('');
+           expect(e.url).not.toBe(undefined);
 
-           })
-         });
+          })
+        });
 
         /* A test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
          it('have names', function(){
-           allFeeds.forEach(function(e){
-             // Here the first one doesn't work while others does
-             // I don't
-             // expect(e.name).toEqual(jasmine.anything());
-             expect(e.name).not.toBe('');
-             expect(e.name).not.toBe(null);
-             expect(e.name).not.toBe(undefined);
-           })
-         })
+            allFeeds.forEach(function(e){
+              // Here the first one doesn't work while others does
+              // I don't
+              // expect(e.name).toEqual(jasmine.anything());
+              expect(e.name).not.toBe('');
+              expect(e.name).not.toBe(null);
+              expect(e.name).not.toBe(undefined);
+            })
+         });
 
     });
 
     describe('The menu', function(){
+      // Tests that ensures the menu element is hidden by default.
+      it('is hidden', function(){
+        let body = $('body'),
+        menuPos = $('.slide-menu').position();
 
-        /* Tests that ensures the menu element is hidden by default.
-         */
-         it('is hidden', function(){
-           let body = $('body'),
-           menuPos = $('.slide-menu').position();
+        expect(body.hasClass('menu-hidden')).toBe(true);
+        expect(menuPos.left).toBeLessThan(-191);
+      });
 
-           expect(body.hasClass('menu-hidden')).toBe(true);
-           expect(menuPos.left).toBeLessThan(-191);
-          })
+     /* Tests menu visibility changes when the menu icon is clicked.
+      * Checks if the first click triggers click event and hiding
+      * and the second click triggers it back
+      *
+      * This part below was largely from pablo-az's answer on stackoverflow:
+      * https://stackoverflow.com/a/50375478/9144800
+      *
+      * and
+      *
+      * https://www.htmlgoodies.com/beyond/javascript/js-ref/testing-dom-events-using-jquery-and-jasmine-2.0.html
+      *
+      */
 
-         /* Tests menu visibility changes when the menu icon is clicked.
-          * Checks if the first click triggers click event and hiding
-          * and the second click triggers it back
-          *
-          * This part below was largely from pablo-az's answer on stackoverflow:
-          * https://stackoverflow.com/a/50375478/9144800
-          *
-          * and
-          *
-          * https://www.htmlgoodies.com/beyond/javascript/js-ref/testing-dom-events-using-jquery-and-jasmine-2.0.html
-          *
-          */
+      it('toggles shown/hidden when clicked', function(){
+        let spyEvent = spyOnEvent('.menu-icon-link', 'click');
 
-          it('toggles shown/hidden when clicked', function(){
-            let spyEvent = spyOnEvent('.menu-icon-link', 'click');
+        // first click
+        $('.menu-icon-link').click();
+        expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
+        expect(spyEvent).toHaveBeenTriggered();
+        expect($('body').hasClass('menu-hidden')).toBe(false);
 
-            // first click
-            $('.menu-icon-link').click();
-            expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
-            expect(spyEvent).toHaveBeenTriggered();
-            expect($('body').hasClass('menu-hidden')).toBe(false);
-
-            // second click
-            $('.menu-icon-link').click();
-            expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
-            expect(spyEvent).toHaveBeenTriggered();
-            expect($('body').hasClass('menu-hidden')).toBe(true);
-          })
+        // second click
+        $('.menu-icon-link').click();
+        expect('click').toHaveBeenTriggeredOn('.menu-icon-link');
+        expect(spyEvent).toHaveBeenTriggered();
+        expect($('body').hasClass('menu-hidden')).toBe(true);
+      });
+    })
 
     describe('Initial Entries', function(){
       let id = 0, cb;
@@ -98,42 +97,36 @@ $(function() {
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          */
-         beforeEach(function(){
-           let loadFeed = spyOn(window, 'loadFeed').and.callThrough();
-           // window.loadFeed(id, cb);
-           // done();
-         })
-
-         it('loadFeed called & at least 1 entry in feed', function(done){
-            expect(loadFeed).toHaveBeenCalled();
-            expect($('.feed').contents('entry')).not.toBe(0);
+        beforeEach(function(done){
+          let loadFeed = spyOn(window, 'loadFeed').and.callThrough();
+          window.loadFeed(id, function(){
             done();
-         })
+          });
+        });
 
-    })
+        it('loadFeed called & at least 1 entry in feed', function(done){
+          expect(loadFeed).toHaveBeenCalled();
+          expect($('.feed').contents('entry')).not.toBe(0);
+          done();
+        });
+
+    });
 
     describe('New Feed Selection', function(){
-      let container = $('.feed');
-      let containerEmpty = spyOnEvent()
 
-      beforeEach(function(done){
-        spyOn(container, 'empty').and.callThrough();
-        container.empty();
-        spyOn(container, 'append').and.callThrough();
-        container.append();
+    	beforeEach (function(done){
+    		spyOn(window, 'loadFeed');
+        window.loadFeed(0);
+        window.loadFeed(1);
         done();
-      })
+      });
 
-      afterEach(function(){
-        container.empty.calls.reset();
-      })
-      // Tests if the empty() is called on feed container
-      it('feed emptied and new feed called',function(done){
-        expect(container.empty).toHaveBeenCalled();
-        expect(container.append).toHaveBeenCalled();
+      it('should have different URL', function(done) {
+        expect(window.loadFeed.calls.count()).toEqual(2);
+        expect(window.loadFeed.calls.argsFor(0)).toEqual([0]);
+        expect(window.loadFeed.calls.argsFor(1)).toEqual([1]);
+
         done();
-      })
-    })
-  })
-
-}());
+    	});
+    });
+  }());
