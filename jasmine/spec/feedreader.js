@@ -29,7 +29,7 @@ $(function() {
         it('have URLs', function(){
           allFeeds.forEach(function(e){
            expect(e.url).not.toBe('');
-           expect(e.url).not.toBe(undefined);
+           expect(e.url).toBeDefined();
 
           })
         });
@@ -43,9 +43,9 @@ $(function() {
               // Here the first one doesn't work while others does
               // I don't
               // expect(e.name).toEqual(jasmine.anything());
-              expect(e.name).not.toBe('');
+              expect(e.name).toBeDefined();
               expect(e.name).not.toBe(null);
-              expect(e.name).not.toBe(undefined);
+              expect(e.name).not.toBe('');
             })
          });
 
@@ -106,26 +106,27 @@ $(function() {
 
         it('loadFeed called & at least 1 entry in feed', function(done){
           expect(loadFeed).toHaveBeenCalled();
-          expect($('.feed').contents('entry')).not.toBe(0);
+          expect($('.feed .entry').length).toBeGreaterThan(1);
           done();
         });
 
     });
 
     describe('New Feed Selection', function(){
+      let firstFeed, secondFeed;
 
     	beforeEach (function(done){
-    		spyOn(window, 'loadFeed');
-        window.loadFeed(0);
-        window.loadFeed(1);
-        done();
+        window.loadFeed(0, function(){
+          firstFeed = $('.feed article').html();
+          window.loadFeed(1,function(){
+            secondFeed = $('.feed article').html();
+            done();
+          });
+        });
       });
 
       it('should have different URL', function(done) {
-        expect(window.loadFeed.calls.count()).toEqual(2);
-        expect(window.loadFeed.calls.argsFor(0)).toEqual([0]);
-        expect(window.loadFeed.calls.argsFor(1)).toEqual([1]);
-
+        expect(secondFeed).not.toEqual(firstFeed);
         done();
     	});
     });
